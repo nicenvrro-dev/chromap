@@ -364,7 +364,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/nicenvrro-dev/chromap/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/nicenvrro-dev/chromap/discussions)
-- **Email**: (Add your email if desired)
+- **Email**: nicenvrro@gmail.com
 
 ## Changelog
 
