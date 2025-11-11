@@ -1,39 +1,23 @@
-# Chromap - Color Extractor
+# Chromap - Color & Font Extractor
 
 <div align="center">
 
 ![Chromap Logo](icons/icon128.png)
 
-**Extract and display all colors from any website**
+**Instantly extract and visualize every color palette and font style from any website.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Coming%20Soon-blue)](https://chrome.google.com/webstore)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/nicenvrro-dev/chromap)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/nicenvrro-dev/chromap)
+![JavaScript](https://img.shields.io/badge/Made%20with-JavaScript-F7DF1E)
+![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen)
+![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [Development](#development) • [Contributing](#contributing)
 
 </div>
 
----
-
-## Overview
-
-Chromap is a powerful Chrome extension that automatically extracts and displays all colors used on any webpage. Perfect for designers, developers, and anyone who wants to understand the color palette of a website.
-
-### Key Features
-
-- 🎨 **Automatic Color Extraction**: Scans entire page DOM for all color values
-- 🔍 **Multiple Color Sources**: Background colors, text colors, border colors, box-shadow colors, and gradient colors
-- 📐 **Color Format Support**: Hex, RGB/RGBA, HSL/HSLA, and named colors
-- 🎯 **Smart Deduplication**: Shows unique colors only with frequency count
-- 📋 **Copy to Clipboard**: One-click copy for hex, RGB, or HSL values
-- 💾 **Export Options**: Export palette as JSON, CSV, or CSS variables
-- 🔄 **Filter & Sort**: Filter by color type, sort by frequency, hue, or brightness
-- 🌓 **Dark/Light Mode**: Automatic theme support in popup UI
-- ⚡ **Instant Modal**: Click any color to view details immediately
-- ✨ **Visual Enhancements**: Hover glow effects, dominant color highlighting, loading animations
-
-## Demo
+## Demo Preview
 
 See Chromap in action! Watch how it extracts colors from any webpage:
 
@@ -45,6 +29,27 @@ _Extracting colors from a webpage in real-time_
 
 </div>
 
+---
+
+## Overview
+
+Whether you’re a designer, developer, or curious creative, Chromap helps you peek behind the pixels — revealing every color and font that shapes a site’s design.
+
+### Key Features
+
+- 🎨 **Extract all colors and fonts** from any webpage instantly
+- ⚡ **Smart deduplication** and frequency-based sorting
+- 📋 **One-click copy & export** (JSON, CSV, CSS variables)
+- 🌓 **Dark/Light mode** popup UI with real-time preview
+- 🧠 **Fully local processing** — no data ever leaves your browser
+
+**UI/UX:**
+
+- 🌓 **Dark/Light Mode**: Automatic theme support in popup UI
+- ⚡ **Instant Modal**: Click any color or font to view details immediately
+- 📑 **Tabbed Interface**: Seamless switching between Colors and Fonts tabs
+- ✨ **Visual Enhancements**: Hover glow effects, dominant color/font highlighting, loading animations
+
 ## Features in Detail
 
 ### Color Extraction
@@ -55,21 +60,41 @@ _Extracting colors from a webpage in real-time_
 - Handles transparent and named colors
 - Optimized for large pages with element sampling
 
+### Font Extraction
+
+- Extracts fonts from DOM elements' computed styles
+- Parses CSS stylesheets for font-family declarations
+- Captures complete typography information:
+  - Font family (with fallback fonts)
+  - Font size (px, em, rem, %, etc.)
+  - Font weight (normal, bold, numeric values)
+  - Font style (normal, italic, oblique)
+  - Line height
+  - Letter spacing
+  - Text transform (uppercase, lowercase, capitalize)
+  - Text decoration (underline, overline, line-through)
+- Shows font preview with actual rendered text
+- Identifies dominant font (most frequently used)
+- Optimized for large pages with element sampling
+
 ### User Interface
 
 - **Modern Design**: Clean, minimalist interface
+- **Tabbed Navigation**: Easy switching between Colors and Fonts
 - **Color Grid**: Responsive grid layout with color swatches
+- **Font Grid**: Responsive grid layout with font preview cards
 - **Color Modal**: Detailed view with hex, RGB, HSL values
+- **Font Modal**: Detailed view with complete typography information
 - **Hover Effects**: Subtle glow using each color's own tone
-- **Dominant Color**: Highlights the most frequent color
+- **Dominant Highlighting**: Highlights the most frequent color or font
 - **Loading Animation**: Professional shimmer effect during extraction
-- **Copy Feedback**: Visual confirmation when colors are copied
+- **Copy Feedback**: Visual confirmation when colors or fonts are copied
 
 ### Export Options
 
-- **JSON**: Structured data format for programmatic use
-- **CSV**: Spreadsheet-compatible format
-- **CSS Variables**: Ready-to-use CSS custom properties
+- **JSON**: Structured data format for programmatic use (colors and fonts)
+- **CSV**: Spreadsheet-compatible format (colors and fonts)
+- **CSS Variables**: Ready-to-use CSS custom properties (colors and fonts)
 
 ### Accessibility
 
@@ -112,9 +137,10 @@ _(Coming soon)_
 
 1. Navigate to any website
 2. Click the Chromap icon in your Chrome toolbar
-3. Colors are automatically extracted and displayed
-4. Click any color card to view details
-5. Copy colors or export the palette
+3. Colors are automatically extracted and displayed in the Colors tab
+4. Switch to the Fonts tab to view extracted fonts
+5. Click any color or font card to view details
+6. Copy colors/fonts or export the palette
 
 ### Advanced Features
 
@@ -135,6 +161,19 @@ _(Coming soon)_
   - **Hue**: Colors organized by hue
   - **Brightness**: Light to dark or vice versa
 
+#### Filtering Fonts
+
+- Use the filter dropdown to show fonts by source:
+  - **All Fonts**: Show all extracted fonts
+  - **Element**: Fonts extracted from DOM elements
+  - **Stylesheet**: Fonts extracted from CSS stylesheets
+
+#### Sorting Fonts
+
+- Sort by:
+  - **Frequency**: Most used fonts first
+  - **Family Name**: Alphabetical order by font family
+
 #### Exporting Palettes
 
 1. Click "Export" in the footer
@@ -142,12 +181,17 @@ _(Coming soon)_
    - **JSON**: For developers and tools
    - **CSV**: For spreadsheets
    - **CSS Variables**: For styling
+3. Select what to export:
+   - **Colors Only**: Export only color data
+   - **Fonts Only**: Export only font data
+   - **Both**: Export colors and fonts together
 
 #### Keyboard Shortcuts
 
 - **ESC**: Close modals
-- **Enter/Space**: Activate color cards (when focused)
+- **Enter/Space**: Activate color/font cards (when focused)
 - **Tab**: Navigate between elements
+- **1/2**: Switch between Colors and Fonts tabs (when popup is focused)
 
 ## Screenshots
 
@@ -155,7 +199,7 @@ _(Coming soon)_
 
 ### Extension Popup Interface
 
-![Chromap Popup UI](docs/screenshots/popup-ui.png)
+![Chromap color extraction popup showing color grid with HEX values](docs/screenshots/popup-ui.png)
 
 _Clean, modern interface displaying extracted color palette with HEX and RGB values_
 
@@ -164,8 +208,10 @@ _Clean, modern interface displaying extracted color palette with HEX and RGB val
 **Key UI Features:**
 
 - **Color Grid**: Responsive grid layout showing all extracted colors
-- **Dominant Color**: Highlighted with star icon and accent border
-- **Filter & Sort**: Easy filtering by color type and sorting options
+- **Font Grid**: Responsive grid layout showing all extracted fonts with preview
+- **Tabbed Interface**: Seamless navigation between Colors and Fonts
+- **Dominant Highlighting**: Most frequent color/font highlighted with star icon and accent border
+- **Filter & Sort**: Easy filtering by type and sorting options for both colors and fonts
 - **Dark Mode**: Automatic theme support for comfortable viewing
 - **Hover Effects**: Subtle glow effects on color cards
 
@@ -179,9 +225,11 @@ chromap/
 ├── popup/                 # Popup UI
 │   ├── popup.html        # Popup HTML structure
 │   ├── popup.css         # Popup styles
-│   └── popup.js          # Popup logic
+│   ├── popup.js          # Popup logic
+│   └── iconUtils.js      # Icon utility (Lucide icons)
 ├── content/               # Content scripts
-│   └── content.js        # Color extraction script
+│   ├── content.js        # Color and font extraction script
+│   └── colorExtractor.js # Color extraction utilities (reference)
 ├── background/            # Background service worker
 │   └── background.js     # Message passing logic
 ├── utils/                 # Shared utilities (reference)
@@ -198,10 +246,12 @@ chromap/
 - **Vanilla JavaScript**: No framework dependencies
 - **CSS3**: Modern CSS with CSS Variables, Grid, Flexbox
 - **Chrome APIs**: `chrome.tabs`, `chrome.scripting`, `chrome.runtime`
+- **Lucide Icons**: SVG icon library (bundled locally for CSP compliance)
 
 ### Building
 
-No build step required - this extension uses vanilla JavaScript.
+Chromap runs directly from source — no build tools required.
+Use the script below only to package files into a `.zip` for Chrome Web Store submission.
 
 ```bash
 # Package for Chrome Web Store
@@ -218,9 +268,11 @@ npm run package
    - Websites with gradients
 3. Test all features:
    - Color extraction
-   - Filtering and sorting
+   - Font extraction
+   - Filtering and sorting (colors and fonts)
+   - Tab navigation
    - Copy to clipboard
-   - Export functionality
+   - Export functionality (colors, fonts, and both)
    - Modal interactions
    - Keyboard shortcuts
 
@@ -252,11 +304,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 - Verify `manifest.json` is valid JSON
 - Check browser console for errors
 
-### Colors not extracting
+### Colors/Fonts not extracting
 
 - Ensure you're on a regular webpage (not chrome:// pages)
 - Check browser console for errors
 - Try refreshing the page and extracting again
+- For fonts: Some fonts may not appear if they're loaded via web fonts that haven't loaded yet
 
 ### Popup not showing
 
@@ -267,8 +320,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ### Export not working
 
 - Check browser supports File API (modern browsers)
-- Verify colors are loaded
+- Verify colors/fonts are loaded
 - Check browser console for errors
+- Ensure you've selected what to export (colors, fonts, or both)
 
 ## Browser Support
 
@@ -279,7 +333,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## Privacy
 
-Chromap does not collect, store, or transmit any personal data. All color extraction happens locally in your browser. See [PRIVACY_POLICY.md](PRIVACY_POLICY.md) for details.
+Chromap does not collect, store, or transmit any personal data. All color and font extraction happens locally in your browser. See [PRIVACY_POLICY.md](PRIVACY_POLICY.md) for details.
 
 ## License
 
@@ -293,13 +347,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Roadmap
 
+- [x] Font extraction from DOM and stylesheets
+- [x] Tabbed interface for Colors and Fonts
+- [x] Font export functionality
 - [ ] Color contrast checker (WCAG compliance)
 - [ ] Extract colors from images
 - [ ] Save favorite palettes
 - [ ] Export as Adobe Swatch (.ase) format
-- [ ] Color history across websites
+- [ ] Color and font history across websites
 - [ ] Settings page for preferences
 - [ ] Improved gradient color extraction
+- [ ] Font pairing suggestions
+- [ ] Typography scale analysis
 
 ## Support
 
@@ -309,7 +368,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes.
+See [CHANGELOG.md](CHANGELOG.md) for version history and [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ---
 

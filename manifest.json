@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Chromap - Color Extractor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Extract and display all colors from any webpage. Perfect for designers and developers.",
   "author": "Chromap Contributors",
   "homepage_url": "https://github.com/yourusername/chromap",
