@@ -11,7 +11,7 @@ We release patches for security vulnerabilities. Which versions are eligible for
 
 ## Reporting a Vulnerability
 
-Please report security vulnerabilities to: **security@example.com** (replace with your email)
+Please report security vulnerabilities to: **nicenvrro@gmail.com**
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
