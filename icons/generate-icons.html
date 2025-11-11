@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Chromap Icons</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      margin: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .instructions {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chromap Icon Generator</h1>
+  
+  <div class="instructions">
+    <h2>Instructions:</h2>
+    <ol>
+      <li>Click "Generate Icons" to create the icon images</li>
+      <li>Right-click each canvas and select "Save image as..."</li>
+      <li>Save as icon16.png, icon48.png, and icon128.png in the icons folder</li>
+      <li>Alternatively, use an image editor to export the SVG at the required sizes</li>
+    </ol>
+  </div>
+
+  <button onclick="generateIcons()">Generate Icons</button>
+
+  <div id="canvases"></div>
+
+  <script>
+    function generateIcons() {
+      const sizes = [16, 48, 128];
+      const container = document.getElementById('canvases');
+      container.innerHTML = '';
+
+      sizes.forEach(size => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        canvas.style.display = 'block';
+        canvas.style.margin = '10px';
+        container.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+
+        // Create gradient
+        const gradient = ctx.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#FF5733');
+        gradient.addColorStop(0.33, '#33FF57');
+        gradient.addColorStop(0.66, '#3357FF');
+        gradient.addColorStop(1, '#FF33F5');
+
+        // Draw rounded rectangle background
+        const radius = size * 0.15;
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(size - radius, 0);
+        ctx.quadraticCurveTo(size, 0, size, radius);
+        ctx.lineTo(size, size - radius);
+        ctx.quadraticCurveTo(size, size, size - radius, size);
+        ctx.lineTo(radius, size);
+        ctx.quadraticCurveTo(0, size, 0, size - radius);
+        ctx.lineTo(0, radius);
+        ctx.quadraticCurveTo(0, 0, radius, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        // Draw circles (color dots)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        const circleSize = size * 0.15;
+        const circles = [
+          { x: size * 0.25, y: size * 0.25 },
+          { x: size * 0.5, y: size * 0.375 },
+          { x: size * 0.75, y: size * 0.3125 },
+          { x: size * 0.375, y: size * 0.625 },
+          { x: size * 0.625, y: size * 0.6875 }
+        ];
+
+        circles.forEach(circle => {
+          ctx.beginPath();
+          ctx.arc(circle.x, circle.y, circleSize, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Draw "C" letter for larger sizes
+        if (size >= 48) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.font = `bold ${size * 0.3}px Arial`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('C', size / 2, size * 0.85);
+        }
+      });
+    }
+
+    // Auto-generate on load
+    window.onload = generateIcons;
+  </script>
+</body>
+</html>
+

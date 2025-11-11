@@ -1,0 +1,31 @@
+{
+  "name": "chromap",
+  "version": "1.0.0",
+  "description": "A Chrome extension that extracts and displays all colors from any webpage",
+  "author": "Chromap Contributors",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "powershell -Command \"Compress-Archive -Path * -DestinationPath chromap-v1.0.0.zip -Force -Exclude '.git','node_modules','*.md','*.zip','.vscode','.idea'\""
+  },
+  "keywords": [
+    "chrome-extension",
+    "color",
+    "palette",
+    "extractor",
+    "design",
+    "developer-tools",
+    "web-design",
+    "color-picker",
+    "css-colors"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/chromap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/chromap/issues"
+  },
+  "homepage": "https://github.com/yourusername/chromap#readme"
+}
+

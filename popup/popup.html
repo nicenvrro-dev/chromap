@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chromap - Color Extractor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container" role="main">
+    <!-- Header -->
+    <header class="header" role="banner">
+      <h1 class="title">Chromap</h1>
+      <button class="icon-button" id="settingsBtn" aria-label="Settings" title="Settings" aria-hidden="true" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M8 10a2 2 0 100-4 2 2 0 000 4z" fill="currentColor"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M8 2.5a.5.5 0 01.5.5v1.055a3.5 3.5 0 01.942 1.232l.748.748a.5.5 0 010 .707l-.748.748a3.5 3.5 0 01-1.232.942V9.5a.5.5 0 01-1 0V8.39a3.5 3.5 0 01-1.232-.942l-.748-.748a.5.5 0 010-.707l.748-.748A3.5 3.5 0 017.5 3.055V2.5a.5.5 0 01.5-.5zM6.5 4.5a2.5 2.5 0 113 0 2.5 2.5 0 01-3 0z" fill="currentColor"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn btn-primary" id="extractBtn">
+        <span>Extract Colors</span>
+      </button>
+      <button class="btn btn-secondary" id="refreshBtn" aria-label="Refresh">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 3v3l2-2m-2 2l-2-2m2 7a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Filters and Sort -->
+    <div class="filters">
+      <select id="filterSelect" class="select" aria-label="Filter by source">
+        <option value="all">All Colors</option>
+        <option value="backgroundColor">Background</option>
+        <option value="color">Text</option>
+        <option value="borderColor">Border</option>
+        <option value="boxShadow">Shadow</option>
+        <option value="backgroundImage">Gradient</option>
+      </select>
+      <select id="sortSelect" class="select" aria-label="Sort by">
+        <option value="frequency">Frequency</option>
+        <option value="hue">Hue</option>
+        <option value="brightness">Brightness</option>
+      </select>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Extracting colors...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error" id="error" style="display: none;">
+      <p id="errorMessage"></p>
+      <button class="btn btn-secondary" id="retryBtn">Retry</button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty" id="empty" style="display: none;">
+      <p>No colors found. Click "Extract Colors" to scan the page.</p>
+    </div>
+
+    <!-- Color Palette -->
+    <div class="palette" id="palette" role="list" aria-label="Color palette"></div>
+
+    <!-- Color Info Modal -->
+    <div class="modal" id="colorModal" style="display: none;" aria-hidden="true" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+      <div class="modal-content">
+        <h2 id="modalTitle" class="sr-only">Color Information</h2>
+        <button class="modal-close" id="closeModal" aria-label="Close modal">&times;</button>
+        <div class="modal-color-swatch" id="modalSwatch" aria-label="Color swatch" role="img"></div>
+        <div class="modal-color-info">
+          <div class="color-value">
+            <label>Hex</label>
+            <div class="value-group">
+              <code id="modalHex"></code>
+              <button class="copy-btn" data-format="hex" aria-label="Copy hex value">Copy</button>
+            </div>
+          </div>
+          <div class="color-value">
+            <label>RGB</label>
+            <div class="value-group">
+              <code id="modalRgb"></code>
+              <button class="copy-btn" data-format="rgb" aria-label="Copy RGB value">Copy</button>
+            </div>
+          </div>
+          <div class="color-value">
+            <label>HSL</label>
+            <div class="value-group">
+              <code id="modalHsl"></code>
+              <button class="copy-btn" data-format="hsl" aria-label="Copy HSL value">Copy</button>
+            </div>
+          </div>
+          <div class="color-stats">
+            <span>Frequency: <strong id="modalFrequency"></strong></span>
+            <span>Sources: <strong id="modalSources"></strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+      <span id="colorCount" aria-live="polite" aria-atomic="true">0 colors found</span>
+      <div class="footer-actions">
+        <button class="btn-link" id="exportBtn" aria-label="Export color palette">Export</button>
+      </div>
+    </footer>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal" style="display: none;" aria-hidden="true" role="dialog" aria-labelledby="exportModalTitle" aria-modal="true">
+      <div class="modal-content modal-small">
+        <button class="modal-close" id="closeExportModal" aria-label="Close export modal">&times;</button>
+        <h2 id="exportModalTitle">Export Palette</h2>
+        <div class="export-options">
+          <button class="btn btn-primary" data-format="json" aria-label="Export palette as JSON">Export as JSON</button>
+          <button class="btn btn-primary" data-format="csv" aria-label="Export palette as CSV">Export as CSV</button>
+          <button class="btn btn-primary" data-format="css" aria-label="Export palette as CSS variables">Export as CSS Variables</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+
