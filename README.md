@@ -29,6 +29,18 @@ _Extracting colors from a webpage in real-time_
 
 </div>
 
+## Screenshots
+
+<div align="center">
+
+### Extension Popup Interface
+
+![Chromap color extraction popup showing color grid with HEX values](docs/screenshots/popup-ui.png)
+
+_Clean, modern interface displaying extracted color palette with HEX and RGB values_
+
+</div>
+
 ---
 
 ## Overview
@@ -192,18 +204,6 @@ _(Coming soon)_
 - **Enter/Space**: Activate color/font cards (when focused)
 - **Tab**: Navigate between elements
 - **1/2**: Switch between Colors and Fonts tabs (when popup is focused)
-
-## Screenshots
-
-<div align="center">
-
-### Extension Popup Interface
-
-![Chromap color extraction popup showing color grid with HEX values](docs/screenshots/popup-ui.png)
-
-_Clean, modern interface displaying extracted color palette with HEX and RGB values_
-
-</div>
 
 **Key UI Features:**
 
