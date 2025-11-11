@@ -33,6 +33,18 @@ Chromap is a powerful Chrome extension that automatically extracts and displays 
 - ⚡ **Instant Modal**: Click any color to view details immediately
 - ✨ **Visual Enhancements**: Hover glow effects, dominant color highlighting, loading animations
 
+## Demo
+
+See Chromap in action! Watch how it extracts colors from any webpage:
+
+<div align="center">
+
+![Chromap Demo](docs/screenshots/demo.gif)
+
+_Extracting colors from a webpage in real-time_
+
+</div>
+
 ## Features in Detail
 
 ### Color Extraction
@@ -139,7 +151,23 @@ _(Coming soon)_
 
 ## Screenshots
 
-_(Add screenshots here when available)_
+<div align="center">
+
+### Extension Popup Interface
+
+![Chromap Popup UI](docs/screenshots/popup-ui.png)
+
+_Clean, modern interface displaying extracted color palette with HEX and RGB values_
+
+</div>
+
+**Key UI Features:**
+
+- **Color Grid**: Responsive grid layout showing all extracted colors
+- **Dominant Color**: Highlighted with star icon and accent border
+- **Filter & Sort**: Easy filtering by color type and sorting options
+- **Dark Mode**: Automatic theme support for comfortable viewing
+- **Hover Effects**: Subtle glow effects on color cards
 
 ## Development
 
