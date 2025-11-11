@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chromap - Color Extractor</title>
   <link rel="stylesheet" href="popup.css">
+  <script src="iconUtils.js"></script>
 </head>
 <body>
   <div class="container" role="main">
@@ -19,33 +20,76 @@
       </button>
     </header>
 
-    <!-- Controls -->
-    <div class="controls">
-      <button class="btn btn-primary" id="extractBtn">
-        <span>Extract Colors</span>
-      </button>
-      <button class="btn btn-secondary" id="refreshBtn" aria-label="Refresh">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 3v3l2-2m-2 2l-2-2m2 7a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-        </svg>
-      </button>
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Content type">
+      <button class="tab-button active" id="colorsTab" role="tab" aria-selected="true" aria-controls="colorsPanel">Colors</button>
+      <button class="tab-button" id="fontsTab" role="tab" aria-selected="false" aria-controls="fontsPanel">Fonts</button>
     </div>
 
-    <!-- Filters and Sort -->
-    <div class="filters">
-      <select id="filterSelect" class="select" aria-label="Filter by source">
-        <option value="all">All Colors</option>
-        <option value="backgroundColor">Background</option>
-        <option value="color">Text</option>
-        <option value="borderColor">Border</option>
-        <option value="boxShadow">Shadow</option>
-        <option value="backgroundImage">Gradient</option>
-      </select>
-      <select id="sortSelect" class="select" aria-label="Sort by">
-        <option value="frequency">Frequency</option>
-        <option value="hue">Hue</option>
-        <option value="brightness">Brightness</option>
-      </select>
+    <!-- Colors Panel -->
+    <div class="tab-panel active" id="colorsPanel" role="tabpanel" aria-labelledby="colorsTab">
+      <!-- Controls -->
+      <div class="controls">
+        <button class="btn btn-primary" id="extractColorsBtn">
+          <span>Extract Colors</span>
+        </button>
+        <button class="btn btn-secondary" id="refreshColorsBtn" aria-label="Refresh extraction" title="Refresh extraction">
+          <span class="icon-refresh"></span>
+        </button>
+      </div>
+
+      <!-- Filters and Sort -->
+      <div class="filters">
+        <select id="filterSelect" class="select" aria-label="Filter by source">
+          <option value="all">All Colors</option>
+          <option value="backgroundColor">Background</option>
+          <option value="color">Text</option>
+          <option value="borderColor">Border</option>
+          <option value="boxShadow">Shadow</option>
+          <option value="backgroundImage">Gradient</option>
+        </select>
+        <select id="sortSelect" class="select" aria-label="Sort by">
+          <option value="frequency">Frequency</option>
+          <option value="hue">Hue</option>
+          <option value="brightness">Brightness</option>
+        </select>
+      </div>
+
+      <!-- Color Palette -->
+      <div class="palette" id="palette" role="list" aria-label="Color palette"></div>
+    </div>
+
+    <!-- Fonts Panel -->
+    <div class="tab-panel" id="fontsPanel" role="tabpanel" aria-labelledby="fontsTab" style="display: none;">
+      <!-- Controls -->
+      <div class="controls">
+        <button class="btn btn-primary" id="extractFontsBtn">
+          <span>Extract Fonts</span>
+        </button>
+        <button class="btn btn-secondary" id="refreshFontsBtn" aria-label="Refresh extraction" title="Refresh extraction">
+          <span class="icon-refresh"></span>
+        </button>
+      </div>
+
+      <!-- Filters and Sort -->
+      <div class="filters">
+        <select id="fontFilterSelect" class="select" aria-label="Filter fonts">
+          <option value="all">All Fonts</option>
+          <option value="family">By Family</option>
+          <option value="size">By Size</option>
+          <option value="weight">By Weight</option>
+          <option value="style">By Style</option>
+        </select>
+        <select id="fontSortSelect" class="select" aria-label="Sort fonts">
+          <option value="frequency">Frequency</option>
+          <option value="family">Family Name</option>
+          <option value="size">Size</option>
+          <option value="weight">Weight</option>
+        </select>
+      </div>
+
+      <!-- Font Palette -->
+      <div class="font-palette" id="fontPalette" role="list" aria-label="Font palette"></div>
     </div>
 
     <!-- Loading State -->
@@ -65,8 +109,10 @@
       <p>No colors found. Click "Extract Colors" to scan the page.</p>
     </div>
 
-    <!-- Color Palette -->
-    <div class="palette" id="palette" role="list" aria-label="Color palette"></div>
+    <!-- Font Empty State -->
+    <div class="empty" id="fontEmpty" style="display: none;">
+      <p>No fonts found. Click "Extract Fonts" to scan the page.</p>
+    </div>
 
     <!-- Color Info Modal -->
     <div class="modal" id="colorModal" style="display: none;" aria-hidden="true" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
@@ -104,11 +150,92 @@
       </div>
     </div>
 
+    <!-- Font Info Modal -->
+    <div class="modal" id="fontModal" style="display: none;" aria-hidden="true" role="dialog" aria-labelledby="fontModalTitle" aria-modal="true">
+      <div class="modal-content">
+        <h2 id="fontModalTitle" class="sr-only">Font Information</h2>
+        <button class="modal-close" id="closeFontModal" aria-label="Close font modal">&times;</button>
+        <div class="modal-font-preview" id="modalFontPreview">
+          <div class="font-preview-text" id="modalFontPreviewText">The quick brown fox jumps over the lazy dog</div>
+        </div>
+        <div class="modal-font-info">
+          <div class="font-value">
+            <label>Font Family</label>
+            <div class="value-group">
+              <code id="modalFontFamily"></code>
+              <button class="copy-btn" data-format="family" aria-label="Copy font family">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>Font Size</label>
+            <div class="value-group">
+              <code id="modalFontSize"></code>
+              <button class="copy-btn" data-format="size" aria-label="Copy font size">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>Font Weight</label>
+            <div class="value-group">
+              <code id="modalFontWeight"></code>
+              <button class="copy-btn" data-format="weight" aria-label="Copy font weight">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>Font Style</label>
+            <div class="value-group">
+              <code id="modalFontStyle"></code>
+              <button class="copy-btn" data-format="style" aria-label="Copy font style">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>Line Height</label>
+            <div class="value-group">
+              <code id="modalLineHeight"></code>
+              <button class="copy-btn" data-format="lineHeight" aria-label="Copy line height">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>Letter Spacing</label>
+            <div class="value-group">
+              <code id="modalLetterSpacing"></code>
+              <button class="copy-btn" data-format="letterSpacing" aria-label="Copy letter spacing">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>Text Transform</label>
+            <div class="value-group">
+              <code id="modalTextTransform"></code>
+              <button class="copy-btn" data-format="textTransform" aria-label="Copy text transform">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>Text Decoration</label>
+            <div class="value-group">
+              <code id="modalTextDecoration"></code>
+              <button class="copy-btn" data-format="textDecoration" aria-label="Copy text decoration">Copy</button>
+            </div>
+          </div>
+          <div class="font-value">
+            <label>CSS Shorthand</label>
+            <div class="value-group">
+              <code id="modalFontShorthand"></code>
+              <button class="copy-btn" data-format="shorthand" aria-label="Copy CSS font shorthand">Copy</button>
+            </div>
+          </div>
+          <div class="font-stats">
+            <span>Frequency: <strong id="modalFontFrequency"></strong></span>
+            <span>Sources: <strong id="modalFontSources"></strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer" role="contentinfo">
-      <span id="colorCount" aria-live="polite" aria-atomic="true">0 colors found</span>
+      <span id="colorCount" aria-live="polite" aria-atomic="true" style="display: none;">0 colors found</span>
+      <span id="fontCount" aria-live="polite" aria-atomic="true" style="display: none;">0 fonts found</span>
       <div class="footer-actions">
-        <button class="btn-link" id="exportBtn" aria-label="Export color palette">Export</button>
+        <button class="btn-link" id="exportBtn" aria-label="Export palette">Export</button>
       </div>
     </footer>
 
@@ -118,9 +245,12 @@
         <button class="modal-close" id="closeExportModal" aria-label="Close export modal">&times;</button>
         <h2 id="exportModalTitle">Export Palette</h2>
         <div class="export-options">
-          <button class="btn btn-primary" data-format="json" aria-label="Export palette as JSON">Export as JSON</button>
-          <button class="btn btn-primary" data-format="csv" aria-label="Export palette as CSV">Export as CSV</button>
-          <button class="btn btn-primary" data-format="css" aria-label="Export palette as CSS variables">Export as CSS Variables</button>
+          <button class="btn btn-primary" data-format="json" data-type="colors" aria-label="Export colors as JSON">Export Colors as JSON</button>
+          <button class="btn btn-primary" data-format="csv" data-type="colors" aria-label="Export colors as CSV">Export Colors as CSV</button>
+          <button class="btn btn-primary" data-format="css" data-type="colors" aria-label="Export colors as CSS variables">Export Colors as CSS</button>
+          <button class="btn btn-primary" data-format="json" data-type="fonts" aria-label="Export fonts as JSON">Export Fonts as JSON</button>
+          <button class="btn btn-primary" data-format="csv" data-type="fonts" aria-label="Export fonts as CSV">Export Fonts as CSV</button>
+          <button class="btn btn-primary" data-format="css" data-type="fonts" aria-label="Export fonts as CSS">Export Fonts as CSS</button>
         </div>
       </div>
     </div>

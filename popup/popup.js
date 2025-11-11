@@ -7,10 +7,20 @@
 let colors = [];
 let filteredColors = [];
 let selectedColor = null;
+let fonts = [];
+let filteredFonts = [];
+let selectedFont = null;
+let activeTab = 'colors';
 
-// DOM Elements
-const extractBtn = document.getElementById('extractBtn');
-const refreshBtn = document.getElementById('refreshBtn');
+// DOM Elements - Tabs
+const colorsTab = document.getElementById('colorsTab');
+const fontsTab = document.getElementById('fontsTab');
+const colorsPanel = document.getElementById('colorsPanel');
+const fontsPanel = document.getElementById('fontsPanel');
+
+// DOM Elements - Colors
+const extractColorsBtn = document.getElementById('extractColorsBtn');
+const refreshColorsBtn = document.getElementById('refreshColorsBtn');
 const filterSelect = document.getElementById('filterSelect');
 const sortSelect = document.getElementById('sortSelect');
 const loading = document.getElementById('loading');
@@ -22,7 +32,16 @@ const palette = document.getElementById('palette');
 const colorCount = document.getElementById('colorCount');
 const exportBtn = document.getElementById('exportBtn');
 
-// Modal elements
+// DOM Elements - Fonts
+const extractFontsBtn = document.getElementById('extractFontsBtn');
+const refreshFontsBtn = document.getElementById('refreshFontsBtn');
+const fontFilterSelect = document.getElementById('fontFilterSelect');
+const fontSortSelect = document.getElementById('fontSortSelect');
+const fontEmpty = document.getElementById('fontEmpty');
+const fontPalette = document.getElementById('fontPalette');
+const fontCount = document.getElementById('fontCount');
+
+// Modal elements - Colors
 const colorModal = document.getElementById('colorModal');
 const closeModal = document.getElementById('closeModal');
 const modalSwatch = document.getElementById('modalSwatch');
@@ -32,62 +51,112 @@ const modalHsl = document.getElementById('modalHsl');
 const modalFrequency = document.getElementById('modalFrequency');
 const modalSources = document.getElementById('modalSources');
 
+// Modal elements - Fonts
+const fontModal = document.getElementById('fontModal');
+const closeFontModal = document.getElementById('closeFontModal');
+const modalFontPreview = document.getElementById('modalFontPreview');
+const modalFontPreviewText = document.getElementById('modalFontPreviewText');
+const modalFontFamily = document.getElementById('modalFontFamily');
+const modalFontSize = document.getElementById('modalFontSize');
+const modalFontWeight = document.getElementById('modalFontWeight');
+const modalFontStyle = document.getElementById('modalFontStyle');
+const modalLineHeight = document.getElementById('modalLineHeight');
+const modalLetterSpacing = document.getElementById('modalLetterSpacing');
+const modalTextTransform = document.getElementById('modalTextTransform');
+const modalTextDecoration = document.getElementById('modalTextDecoration');
+const modalFontShorthand = document.getElementById('modalFontShorthand');
+const modalFontFrequency = document.getElementById('modalFontFrequency');
+const modalFontSources = document.getElementById('modalFontSources');
+
 // Export modal elements
 const exportModal = document.getElementById('exportModal');
 const closeExportModalBtn = document.getElementById('closeExportModal');
 const exportOptions = document.querySelectorAll('#exportModal .btn[data-format]');
 
-// Event Listeners
-extractBtn.addEventListener('click', extractColors);
-refreshBtn.addEventListener('click', extractColors);
-retryBtn.addEventListener('click', extractColors);
-filterSelect.addEventListener('change', applyFilters);
-sortSelect.addEventListener('change', applyFilters);
-closeModal.addEventListener('click', closeColorModal);
-closeExportModalBtn.addEventListener('click', () => {
-  exportModal.style.display = 'none';
-  exportModal.setAttribute('aria-hidden', 'true');
-  exportBtn.focus();
-});
-exportBtn.addEventListener('click', () => {
-  exportModal.style.display = 'flex';
-  exportModal.setAttribute('aria-hidden', 'false');
-  setTimeout(() => {
-    closeExportModalBtn.focus();
-  }, 100);
-});
+// Event Listeners - Tabs
+if (colorsTab) colorsTab.addEventListener('click', () => switchTab('colors'));
+if (fontsTab) fontsTab.addEventListener('click', () => switchTab('fonts'));
 
-// Close modals when clicking outside
-colorModal.addEventListener('click', (e) => {
-  if (e.target === colorModal) {
-    closeColorModal();
-  }
-});
+// Event Listeners - Colors
+if (extractColorsBtn) extractColorsBtn.addEventListener('click', extractColors);
+if (refreshColorsBtn) refreshColorsBtn.addEventListener('click', extractColors);
+if (retryBtn) retryBtn.addEventListener('click', extractColors);
+if (filterSelect) filterSelect.addEventListener('change', applyFilters);
+if (sortSelect) sortSelect.addEventListener('change', applyFilters);
+if (closeModal) closeModal.addEventListener('click', closeColorModal);
 
-exportModal.addEventListener('click', (e) => {
-  if (e.target === exportModal) {
-    exportModal.style.display = 'none';
-  }
-});
-
-// Export options
-exportOptions.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const format = btn.getAttribute('data-format');
-    exportPalette(format);
+// Event Listeners - Fonts
+if (extractFontsBtn) extractFontsBtn.addEventListener('click', extractFonts);
+if (refreshFontsBtn) refreshFontsBtn.addEventListener('click', extractFonts);
+if (fontFilterSelect) fontFilterSelect.addEventListener('change', applyFontFilters);
+if (fontSortSelect) fontSortSelect.addEventListener('change', applyFontFilters);
+if (closeFontModal) closeFontModal.addEventListener('click', closeFontModalFunc);
+if (closeExportModalBtn) {
+  closeExportModalBtn.addEventListener('click', () => {
     exportModal.style.display = 'none';
     exportModal.setAttribute('aria-hidden', 'true');
-    exportBtn.focus();
+    if (exportBtn) exportBtn.focus();
   });
-});
+}
+if (exportBtn) {
+  exportBtn.addEventListener('click', () => {
+    exportModal.style.display = 'flex';
+    exportModal.setAttribute('aria-hidden', 'false');
+    setTimeout(() => {
+      if (closeExportModalBtn) closeExportModalBtn.focus();
+    }, 100);
+  });
+}
+
+// Close modals when clicking outside
+if (colorModal) {
+  colorModal.addEventListener('click', (e) => {
+    if (e.target === colorModal) {
+      closeColorModal();
+    }
+  });
+}
+
+if (exportModal) {
+  exportModal.addEventListener('click', (e) => {
+    if (e.target === exportModal) {
+      exportModal.style.display = 'none';
+    }
+  });
+}
+
+if (fontModal) {
+  fontModal.addEventListener('click', (e) => {
+    if (e.target === fontModal) {
+      closeFontModalFunc();
+    }
+  });
+}
+
+// Export options
+if (exportOptions && exportOptions.length > 0) {
+  exportOptions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const format = btn.getAttribute('data-format');
+      const type = btn.getAttribute('data-type');
+      exportPalette(format, type);
+      if (exportModal) {
+        exportModal.style.display = 'none';
+        exportModal.setAttribute('aria-hidden', 'true');
+      }
+      if (exportBtn) exportBtn.focus();
+    });
+  });
+}
 
 // Copy buttons in modal
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('copy-btn')) {
     const format = e.target.getAttribute('data-format');
-    const color = selectedColor;
-    if (color) {
-      copyToClipboard(color, format, e.target);
+    if (selectedColor && colorModal && colorModal.style.display === 'flex') {
+      copyToClipboard(selectedColor, format, e.target);
+    } else if (selectedFont && fontModal && fontModal.style.display === 'flex') {
+      copyFontToClipboard(selectedFont, format, e.target);
     }
   }
 });
@@ -369,16 +438,18 @@ async function copyHexToClipboard(hex) {
 
 // Open color modal
 function openColorModal(color) {
+  if (!colorModal) return;
   selectedColor = color;
-  modalSwatch.style.backgroundColor = color.hex;
-  modalHex.textContent = color.hex.toUpperCase();
-  modalRgb.textContent = color.rgb || '';
-  modalHsl.textContent = color.hsl || '';
-  modalFrequency.textContent = color.frequency || 0;
-  modalSources.textContent = color.sources ? color.sources.join(', ') : '';
+  
+  if (modalSwatch) modalSwatch.style.backgroundColor = color.hex;
+  if (modalHex) modalHex.textContent = color.hex.toUpperCase();
+  if (modalRgb) modalRgb.textContent = color.rgb || '';
+  if (modalHsl) modalHsl.textContent = color.hsl || '';
+  if (modalFrequency) modalFrequency.textContent = color.frequency || 0;
+  if (modalSources) modalSources.textContent = color.sources ? color.sources.join(', ') : '';
 
   // Update copy buttons - highlight hex button since it was just copied
-  const copyButtons = document.querySelectorAll('.copy-btn');
+  const copyButtons = document.querySelectorAll('#colorModal .copy-btn');
   copyButtons.forEach(btn => {
     btn.classList.remove('copied');
     if (btn.getAttribute('data-format') === 'hex') {
@@ -402,18 +473,19 @@ function openColorModal(color) {
   
   // Focus the close button for accessibility (minimal delay for smooth transition)
   requestAnimationFrame(() => {
-    closeModal.focus();
+    if (closeModal) closeModal.focus();
   });
 }
 
 // Close color modal
 function closeColorModal() {
+  if (!colorModal) return;
   colorModal.style.display = 'none';
   colorModal.setAttribute('aria-hidden', 'true');
   selectedColor = null;
   
   // Return focus to the last focused element
-  const lastFocused = document.querySelector('.color-card:focus') || extractBtn;
+  const lastFocused = document.querySelector('.color-card:focus') || extractColorsBtn;
   if (lastFocused) {
     lastFocused.focus();
   }
@@ -469,54 +541,109 @@ async function copyToClipboard(color, format, button) {
 }
 
 // Export palette
-function exportPalette(format) {
-  if (filteredColors.length === 0) {
-    alert('No colors to export');
-    return;
-  }
-
-  let content = '';
-  let filename = '';
-  let mimeType = '';
-
-  switch (format) {
-    case 'json':
-      content = JSON.stringify(filteredColors, null, 2);
-      filename = 'chromap-palette.json';
-      mimeType = 'application/json';
-      break;
-    case 'csv':
-      content = 'Hex,RGB,HSL,Frequency,Sources\n';
-      filteredColors.forEach(color => {
-        const sources = color.sources ? color.sources.join(';') : '';
-        content += `"${color.hex}","${color.rgb}","${color.hsl}",${color.frequency},"${sources}"\n`;
-      });
-      filename = 'chromap-palette.csv';
-      mimeType = 'text/csv';
-      break;
-    case 'css':
-      content = ':root {\n';
-      filteredColors.forEach((color, index) => {
-        content += `  --color-${index + 1}: ${color.hex};\n`;
-      });
-      content += '}\n';
-      filename = 'chromap-palette.css';
-      mimeType = 'text/css';
-      break;
-    default:
+function exportPalette(format, type = 'colors') {
+  if (type === 'colors') {
+    if (filteredColors.length === 0) {
+      alert('No colors to export');
       return;
-  }
+    }
 
-  // Create download
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+    let content = '';
+    let filename = '';
+    let mimeType = '';
+
+    switch (format) {
+      case 'json':
+        content = JSON.stringify(filteredColors, null, 2);
+        filename = 'chromap-colors.json';
+        mimeType = 'application/json';
+        break;
+      case 'csv':
+        content = 'Hex,RGB,HSL,Frequency,Sources\n';
+        filteredColors.forEach(color => {
+          const sources = color.sources ? color.sources.join(';') : '';
+          content += `"${color.hex}","${color.rgb}","${color.hsl}",${color.frequency},"${sources}"\n`;
+        });
+        filename = 'chromap-colors.csv';
+        mimeType = 'text/csv';
+        break;
+      case 'css':
+        content = ':root {\n';
+        filteredColors.forEach((color, index) => {
+          content += `  --color-${index + 1}: ${color.hex};\n`;
+        });
+        content += '}\n';
+        filename = 'chromap-colors.css';
+        mimeType = 'text/css';
+        break;
+      default:
+        return;
+    }
+
+    // Create download
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } else if (type === 'fonts') {
+    if (filteredFonts.length === 0) {
+      alert('No fonts to export');
+      return;
+    }
+
+    let content = '';
+    let filename = '';
+    let mimeType = '';
+
+    switch (format) {
+      case 'json':
+        content = JSON.stringify(filteredFonts, null, 2);
+        filename = 'chromap-fonts.json';
+        mimeType = 'application/json';
+        break;
+      case 'csv':
+        content = 'Family,Size,Weight,Style,LineHeight,LetterSpacing,TextTransform,TextDecoration,Frequency,Sources\n';
+        filteredFonts.forEach(font => {
+          const sources = font.sources ? font.sources.join(';') : '';
+          content += `"${font.family}","${font.size}","${font.weight}","${font.style}","${font.lineHeight}","${font.letterSpacing}","${font.textTransform}","${font.textDecoration}",${font.frequency},"${sources}"\n`;
+        });
+        filename = 'chromap-fonts.csv';
+        mimeType = 'text/csv';
+        break;
+      case 'css':
+        content = ':root {\n';
+        filteredFonts.forEach((font, index) => {
+          content += `  --font-${index + 1}-family: "${font.family}";\n`;
+          content += `  --font-${index + 1}-size: ${font.size};\n`;
+          content += `  --font-${index + 1}-weight: ${font.weight};\n`;
+          content += `  --font-${index + 1}-style: ${font.style};\n`;
+          content += `  --font-${index + 1}-line-height: ${font.lineHeight};\n`;
+          content += `  --font-${index + 1}-letter-spacing: ${font.letterSpacing};\n`;
+        });
+        content += '}\n';
+        filename = 'chromap-fonts.css';
+        mimeType = 'text/css';
+        break;
+      default:
+        return;
+    }
+
+    // Create download
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }
 
 // Update color count
@@ -564,20 +691,411 @@ function getBrightnessFromHex(hex) {
 }
 
 
+// Tab switching
+function switchTab(tab) {
+  activeTab = tab;
+  
+  if (tab === 'colors') {
+    colorsTab.classList.add('active');
+    colorsTab.setAttribute('aria-selected', 'true');
+    fontsTab.classList.remove('active');
+    fontsTab.setAttribute('aria-selected', 'false');
+    colorsPanel.classList.add('active');
+    colorsPanel.style.display = 'flex';
+    fontsPanel.classList.remove('active');
+    fontsPanel.style.display = 'none';
+    colorCount.style.display = 'block';
+    fontCount.style.display = 'none';
+  } else {
+    fontsTab.classList.add('active');
+    fontsTab.setAttribute('aria-selected', 'true');
+    colorsTab.classList.remove('active');
+    colorsTab.setAttribute('aria-selected', 'false');
+    fontsPanel.classList.add('active');
+    fontsPanel.style.display = 'flex';
+    colorsPanel.classList.remove('active');
+    colorsPanel.style.display = 'none';
+    fontCount.style.display = 'block';
+    colorCount.style.display = 'none';
+  }
+}
+
+// Extract fonts from current page
+async function extractFonts() {
+  showLoading();
+  hideError();
+  hideFontEmpty();
+
+  try {
+    const response = await chrome.runtime.sendMessage({ action: 'getFonts' });
+    
+    if (response && response.success) {
+      fonts = response.fonts || [];
+      if (fonts.length === 0) {
+        showFontEmpty();
+      } else {
+        applyFontFilters();
+      }
+    } else {
+      showError(response?.error || 'Failed to extract fonts');
+    }
+  } catch (error) {
+    showError(error.message || 'An error occurred while extracting fonts');
+  } finally {
+    hideLoading();
+  }
+}
+
+// Show font empty state
+function showFontEmpty() {
+  if (fontEmpty) fontEmpty.style.display = 'block';
+  if (fontPalette) {
+    fontPalette.style.display = 'none';
+    fontPalette.innerHTML = '';
+  }
+}
+
+// Hide font empty state
+function hideFontEmpty() {
+  if (fontEmpty) fontEmpty.style.display = 'none';
+}
+
+// Apply font filters and sorting
+function applyFontFilters() {
+  if (!fontFilterSelect || !fontSortSelect) return;
+  const filterValue = fontFilterSelect.value;
+  const sortValue = fontSortSelect.value;
+
+  // Filter fonts
+  if (filterValue === 'all') {
+    filteredFonts = [...fonts];
+  } else if (filterValue === 'family') {
+    const familyMap = new Map();
+    fonts.forEach(font => {
+      if (!familyMap.has(font.family)) {
+        familyMap.set(font.family, []);
+      }
+      familyMap.get(font.family).push(font);
+    });
+    filteredFonts = Array.from(familyMap.values()).flat();
+  } else {
+    filteredFonts = fonts.filter(font => {
+      if (filterValue === 'size') {
+        return font.size;
+      } else if (filterValue === 'weight') {
+        return font.weight && font.weight !== '400';
+      } else if (filterValue === 'style') {
+        return font.style && font.style !== 'normal';
+      }
+      return true;
+    });
+  }
+
+  // Sort fonts
+  if (sortValue === 'frequency') {
+    filteredFonts.sort((a, b) => b.frequency - a.frequency);
+  } else if (sortValue === 'family') {
+    filteredFonts.sort((a, b) => a.family.localeCompare(b.family));
+  } else if (sortValue === 'size') {
+    filteredFonts.sort((a, b) => {
+      const sizeA = parseFloat(a.size) || 0;
+      const sizeB = parseFloat(b.size) || 0;
+      return sizeB - sizeA;
+    });
+  } else if (sortValue === 'weight') {
+    filteredFonts.sort((a, b) => {
+      const weightA = parseInt(a.weight) || 400;
+      const weightB = parseInt(b.weight) || 400;
+      return weightB - weightA;
+    });
+  }
+
+  renderFontPalette();
+  updateFontCount();
+}
+
+// Get dominant font (highest frequency)
+function getDominantFont() {
+  if (filteredFonts.length === 0) return null;
+  return filteredFonts.reduce((prev, current) => 
+    (prev.frequency > current.frequency) ? prev : current
+  );
+}
+
+// Render font palette
+function renderFontPalette() {
+  if (!fontPalette) return;
+  fontPalette.innerHTML = '';
+
+  if (filteredFonts.length === 0) {
+    fontPalette.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary); padding: 24px;">No fonts match the current filter.</p>';
+    return;
+  }
+
+  // Get dominant font (only if sorting by frequency)
+  const dominantFont = fontSortSelect && fontSortSelect.value === 'frequency' ? getDominantFont() : null;
+
+  filteredFonts.forEach(font => {
+    const isDominant = dominantFont && createFontSignature(font) === createFontSignature(dominantFont);
+    const card = createFontCard(font, isDominant);
+    fontPalette.appendChild(card);
+  });
+}
+
+// Create font signature for comparison
+function createFontSignature(font) {
+  return `${font.family}|${font.size}|${font.weight}|${font.style}`;
+}
+
+// Create font card element
+function createFontCard(font, isDominant = false) {
+  const card = document.createElement('div');
+  card.className = 'font-card';
+  if (isDominant) {
+    card.classList.add('dominant');
+  }
+  card.setAttribute('role', 'listitem');
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('aria-label', `Font ${font.family} ${font.size}`);
+
+  // Frequency badge
+  const frequencyBadge = document.createElement('div');
+  frequencyBadge.className = 'font-frequency';
+  frequencyBadge.textContent = font.frequency;
+  card.appendChild(frequencyBadge);
+
+  // Font preview
+  const preview = document.createElement('div');
+  preview.className = 'font-preview';
+  const previewText = document.createElement('div');
+  previewText.className = 'font-preview-text';
+  previewText.textContent = 'Aa';
+  previewText.style.fontFamily = font.family;
+  previewText.style.fontSize = font.size;
+  previewText.style.fontWeight = font.weight;
+  previewText.style.fontStyle = font.style;
+  preview.appendChild(previewText);
+  card.appendChild(preview);
+
+  // Font info
+  const info = document.createElement('div');
+  info.className = 'font-info';
+
+  const familyName = document.createElement('div');
+  familyName.className = 'font-family-name';
+  familyName.textContent = font.family;
+  info.appendChild(familyName);
+
+  const details = document.createElement('div');
+  details.className = 'font-details';
+  
+  const sizeItem = document.createElement('div');
+  sizeItem.className = 'font-detail-item';
+  sizeItem.textContent = font.size;
+  details.appendChild(sizeItem);
+
+  const weightItem = document.createElement('div');
+  weightItem.className = 'font-detail-item';
+  weightItem.textContent = font.weight === '400' ? 'Regular' : font.weight;
+  details.appendChild(weightItem);
+
+  if (font.style !== 'normal') {
+    const styleItem = document.createElement('div');
+    styleItem.className = 'font-detail-item';
+    styleItem.textContent = font.style;
+    details.appendChild(styleItem);
+  }
+
+  info.appendChild(details);
+  card.appendChild(info);
+
+  // Handle click - open modal
+  card.addEventListener('click', () => {
+    openFontModal(font);
+  });
+
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openFontModal(font);
+    }
+  });
+
+  return card;
+}
+
+// Open font modal
+function openFontModal(font) {
+  if (!fontModal) return;
+  selectedFont = font;
+  
+  // Set preview text with font properties
+  if (modalFontPreviewText) {
+    modalFontPreviewText.style.fontFamily = font.family;
+    modalFontPreviewText.style.fontSize = font.size;
+    modalFontPreviewText.style.fontWeight = font.weight;
+    modalFontPreviewText.style.fontStyle = font.style;
+    modalFontPreviewText.style.lineHeight = font.lineHeight;
+    modalFontPreviewText.style.letterSpacing = font.letterSpacing;
+    modalFontPreviewText.style.textTransform = font.textTransform;
+    modalFontPreviewText.style.textDecoration = font.textDecoration;
+  }
+
+  // Set modal values
+  if (modalFontFamily) modalFontFamily.textContent = font.family;
+  if (modalFontSize) modalFontSize.textContent = font.size;
+  if (modalFontWeight) modalFontWeight.textContent = font.weight;
+  if (modalFontStyle) modalFontStyle.textContent = font.style;
+  if (modalLineHeight) modalLineHeight.textContent = font.lineHeight;
+  if (modalLetterSpacing) modalLetterSpacing.textContent = font.letterSpacing;
+  if (modalTextTransform) modalTextTransform.textContent = font.textTransform;
+  if (modalTextDecoration) modalTextDecoration.textContent = font.textDecoration;
+  
+  // Generate CSS shorthand
+  const shorthand = `${font.style} ${font.weight} ${font.size}/${font.lineHeight} "${font.family}"`;
+  if (modalFontShorthand) modalFontShorthand.textContent = shorthand;
+  
+  if (modalFontFrequency) modalFontFrequency.textContent = font.frequency || 0;
+  if (modalFontSources) modalFontSources.textContent = font.sources ? font.sources.join(', ') : '';
+
+  // Reset copy buttons
+  const copyButtons = document.querySelectorAll('#fontModal .copy-btn');
+  copyButtons.forEach(btn => {
+    btn.classList.remove('copied');
+    btn.textContent = 'Copy';
+  });
+
+  // Show modal
+  fontModal.style.display = 'flex';
+  fontModal.setAttribute('aria-hidden', 'false');
+  fontModal.setAttribute('role', 'dialog');
+  fontModal.setAttribute('aria-labelledby', 'fontModalTitle');
+
+  requestAnimationFrame(() => {
+    const closeBtn = document.getElementById('closeFontModal');
+    if (closeBtn) closeBtn.focus();
+  });
+}
+
+// Close font modal
+function closeFontModalFunc() {
+  if (!fontModal) return;
+  fontModal.style.display = 'none';
+  fontModal.setAttribute('aria-hidden', 'true');
+  selectedFont = null;
+  
+  const lastFocused = document.querySelector('.font-card:focus') || extractFontsBtn;
+  if (lastFocused) {
+    lastFocused.focus();
+  }
+}
+
+// Copy font to clipboard
+async function copyFontToClipboard(font, format, button) {
+  let text = '';
+
+  switch (format) {
+    case 'family':
+      text = font.family;
+      break;
+    case 'size':
+      text = font.size;
+      break;
+    case 'weight':
+      text = font.weight;
+      break;
+    case 'style':
+      text = font.style;
+      break;
+    case 'lineHeight':
+      text = font.lineHeight;
+      break;
+    case 'letterSpacing':
+      text = font.letterSpacing;
+      break;
+    case 'textTransform':
+      text = font.textTransform;
+      break;
+    case 'textDecoration':
+      text = font.textDecoration;
+      break;
+    case 'shorthand':
+      text = `${font.style} ${font.weight} ${font.size}/${font.lineHeight} "${font.family}"`;
+      break;
+    default:
+      text = font.family;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    button.classList.add('copied');
+    button.textContent = 'Copied!';
+    setTimeout(() => {
+      button.classList.remove('copied');
+      button.textContent = 'Copy';
+    }, 2000);
+  } catch (error) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      button.classList.add('copied');
+      button.textContent = 'Copied!';
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.textContent = 'Copy';
+      }, 2000);
+    } catch (err) {
+      // Fallback copy failed
+    }
+    document.body.removeChild(textarea);
+  }
+}
+
+// Update font count
+function updateFontCount() {
+  if (!fontCount) return;
+  const count = filteredFonts.length;
+  const total = fonts.length;
+  if (count === total) {
+    fontCount.textContent = `${count} font${count !== 1 ? 's' : ''} found`;
+  } else {
+    fontCount.textContent = `${count} of ${total} font${total !== 1 ? 's' : ''}`;
+  }
+}
+
+// Initialize icons
+function initializeIcons() {
+  // Populate refresh icons
+  const refreshIcons = document.querySelectorAll('.icon-refresh');
+  refreshIcons.forEach(icon => {
+    if (window.iconUtils && window.iconUtils.getRefreshIcon) {
+      icon.innerHTML = window.iconUtils.getRefreshIcon({ size: 16, strokeWidth: 1.5 });
+    }
+  });
+}
+
 // Initialize: Extract colors on load
 document.addEventListener('DOMContentLoaded', () => {
+  initializeIcons();
   extractColors();
 });
 
 // Handle keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (colorModal.style.display === 'flex') {
+    if (colorModal && colorModal.style.display === 'flex') {
       closeColorModal();
-    } else if (exportModal.style.display === 'flex') {
+    } else if (fontModal && fontModal.style.display === 'flex') {
+      closeFontModalFunc();
+    } else if (exportModal && exportModal.style.display === 'flex') {
       exportModal.style.display = 'none';
       exportModal.setAttribute('aria-hidden', 'true');
-      exportBtn.focus();
+      if (exportBtn) exportBtn.focus();
     }
   }
 });

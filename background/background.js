@@ -9,6 +9,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     handleGetColors(sendResponse);
     return true; // Indicate we will send response asynchronously
   }
+  if (request.action === 'getFonts') {
+    handleGetFonts(sendResponse);
+    return true; // Indicate we will send response asynchronously
+  }
   return false;
 });
 
@@ -71,6 +75,84 @@ async function handleGetColors(sendResponse) {
           sendResponse({ 
             success: false, 
             error: response?.error || 'Failed to extract colors' 
+          });
+        }
+      });
+
+    } catch (error) {
+      sendResponse({ 
+        success: false, 
+        error: `Failed to inject script: ${error.message}` 
+      });
+    }
+
+  } catch (error) {
+    sendResponse({ 
+      success: false, 
+      error: error.message || 'An unexpected error occurred' 
+    });
+  }
+}
+
+/**
+ * Handle font extraction request from popup
+ * @param {Function} sendResponse - Callback to send response
+ */
+async function handleGetFonts(sendResponse) {
+  try {
+    // Get the active tab
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    if (!tab) {
+      sendResponse({ 
+        success: false, 
+        error: 'No active tab found' 
+      });
+      return;
+    }
+
+    // Check if tab URL is valid (not chrome://, chrome-extension://, etc.)
+    if (!tab.url || tab.url.startsWith('chrome://') || 
+        tab.url.startsWith('chrome-extension://') || 
+        tab.url.startsWith('edge://') ||
+        tab.url.startsWith('about:') ||
+        tab.url.startsWith('moz-extension://')) {
+      sendResponse({ 
+        success: false, 
+        error: 'Cannot extract fonts from this page. Please navigate to a regular webpage.' 
+      });
+      return;
+    }
+
+    // Inject content script and extract fonts
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['content/content.js']
+      });
+
+      // Wait for the script to initialize (minimal delay for script registration)
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Send message to content script to extract fonts
+      chrome.tabs.sendMessage(tab.id, { action: 'extractFonts' }, (response) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ 
+            success: false, 
+            error: chrome.runtime.lastError.message || 'Failed to communicate with content script' 
+          });
+          return;
+        }
+
+        if (response && response.success) {
+          sendResponse({ 
+            success: true, 
+            fonts: response.fonts || [] 
+          });
+        } else {
+          sendResponse({ 
+            success: false, 
+            error: response?.error || 'Failed to extract fonts' 
           });
         }
       });

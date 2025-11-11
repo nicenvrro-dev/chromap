@@ -26,6 +26,8 @@
   "bugs": {
     "url": "https://github.com/yourusername/chromap/issues"
   },
-  "homepage": "https://github.com/yourusername/chromap#readme"
+  "homepage": "https://github.com/yourusername/chromap#readme",
+  "devDependencies": {
+    "lucide": "^0.553.0"
+  }
 }
-
